@@ -39,7 +39,7 @@ Accessible through *Mod Menu*:
 ---
 
 ## 📦 Downloads
-
+- **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases)
 - **CurseForge:** [https://www.curseforge.com/minecraft/mc-mods/hotbarcycle](https://www.curseforge.com/minecraft/mc-mods/hotbarcycle)  
 - **Modrinth:** [https://modrinth.com/mod/hotbarcycle](https://modrinth.com/mod/hotbarcycle)
 
