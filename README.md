@@ -1,20 +1,66 @@
-# HotbarCycle
-Minecraft Fabric mod for Stardew Valley-inspired hotbar cycling. Developed for 1.19.
+# 🌾 HotbarCycle (Optimized & Ported for 1.21.9)
 
-# Features
-Adds 2 keybinds:
-- Cycle Hotbar (Default: H): shifts the rows of the inventory downwards, allowing quick access to every row of the inventory without ever opening it.
-- Cycle Slot (Default: J): shifts a single column of the inventory downwards (whichever hotbar slot you have selected).
+**Note:** This is *not* the original version of the mod.  
+It has been **optimized and updated** to work with **Minecraft Fabric 1.21.9**, maintaining all original features while improving performance and compatibility.
 
-**Additionally, there is Hold-and-Scroll mode:**
-Instead of clicking a keybind to cycle the hotbar/slot, hold the button and use your scroll-wheel to cycle!
+---
 
-There are also config options for reversing the cycle order, enabling sounds, and enabling individual rows/columns for cycling through mod menu.
+## 📜 Description
 
-# Download
-**Curseforge**: https://www.curseforge.com/minecraft/mc-mods/hotbarcycle
+**HotbarCycle** is a *Stardew Valley*-inspired mod that allows you to **cycle through your hotbar and inventory rows** without opening your inventory screen.
 
-**Modrinth**: https://modrinth.com/mod/hotbarcycle
+Originally developed for **Minecraft 1.19**, this updated port keeps the same core functionality while ensuring full compatibility with modern versions.
 
-# Video Showcase
+---
+
+## ⚙️ Features
+
+This mod adds **two customizable keybinds**:
+
+- 🔁 **Cycle Hotbar (Default: H)**  
+  Shifts all rows of your inventory downward, giving you quick access to every item slot without ever opening your inventory.
+
+- 🔄 **Cycle Slot (Default: J)**  
+  Shifts only the selected hotbar column downward, based on whichever slot is currently active.
+
+### 🖱️ Hold-and-Scroll Mode
+Instead of repeatedly pressing a key, simply **hold the key** and **use your mouse wheel** to scroll through your hotbar or inventory rows!
+
+---
+
+## ⚙️ Configuration Options (Dosen't Work)
+
+Accessible through *Mod Menu*:
+
+- Reverse cycle direction  
+- Enable/disable sound effects  
+- Toggle which rows or columns are affected by cycling  
+
+---
+
+## 📦 Downloads
+
+- **CurseForge:** [https://www.curseforge.com/minecraft/mc-mods/hotbarcycle](https://www.curseforge.com/minecraft/mc-mods/hotbarcycle)  
+- **Modrinth:** [https://modrinth.com/mod/hotbarcycle](https://modrinth.com/mod/hotbarcycle)
+
+*(These links point to the original mod pages.)*
+
+---
+
+## 🎥 Video Showcase
+
 [![HotbarCycle Showcase](https://img.youtube.com/vi/zJixvvbsNpM/mqdefault.jpg)](https://www.youtube.com/watch?v=zJixvvbsNpM)
+
+---
+
+## 🧩 Credits
+
+- Original mod by **nyuppo**  
+- Optimized & ported to **Fabric 1.21.9** by **ElCorchetes**
+
+---
+
+## ⚖️ License
+
+All original code and assets belong to their respective creators.  
+This modified version is distributed solely for compatibility and performance improvements on newer Minecraft versions.

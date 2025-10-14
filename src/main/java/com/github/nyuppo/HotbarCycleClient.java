@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.sound.SoundCategory;
@@ -22,16 +21,44 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+
 public class HotbarCycleClient implements ClientModInitializer {
-    private static KeyBinding cycleKeyBinding;
-    private static KeyBinding singleCycleKeyBinding;
-
-    private static final HotbarCycleConfig CONFIG;
-
-    private static Clicker clicker;
 
     public static final Logger LOGGER = LoggerFactory.getLogger("hotbarcycle");
+    private static final HotbarCycleConfig CONFIG;
+    private static final KeyBinding.Category HOTBARCYCLE_CATEGORY = KeyBinding.Category.MISC;
+    private static final BooleanSupplier[] COLUMN_CHECKS;
 
+    private static KeyBinding cycleKeyBinding;
+    private static KeyBinding singleCycleKeyBinding;
+    private static Clicker clicker;
+
+    static {
+        if (FabricLoader.getInstance().isModLoaded("cloth-config")) {
+            CONFIG = AutoConfig.register(ClothConfigHotbarCycleConfig.class, GsonConfigSerializer::new).getConfig();
+        } else {
+            LOGGER.warn("Cloth Config no encontrado. Usando configuración por defecto.");
+            CONFIG = new DefaultHotbarCycleConfig();
+        }
+
+        COLUMN_CHECKS = new BooleanSupplier[]{
+                CONFIG::getEnableColumn0, CONFIG::getEnableColumn1, CONFIG::getEnableColumn2,
+                CONFIG::getEnableColumn3, CONFIG::getEnableColumn4, CONFIG::getEnableColumn5,
+                CONFIG::getEnableColumn6, CONFIG::getEnableColumn7, CONFIG::getEnableColumn8
+        };
+    }
+
+    @Override
+    public void onInitializeClient() {
+        clicker = getClicker();
+        registerKeyBindings();
+        registerTickHandler();
+    }
+
+    // --- Getters Públicos para Mixins y API ---
     public static HotbarCycleConfig getConfig() {
         return CONFIG;
     }
@@ -44,148 +71,75 @@ public class HotbarCycleClient implements ClientModInitializer {
         return singleCycleKeyBinding;
     }
 
-    @Override
-    public void onInitializeClient() {
-        clicker = getClicker();
-
+    private void registerKeyBindings() {
         cycleKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.hotbarcycle.cycle",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_H,
-                "category.hotbarcycle.keybinds"
-        ));
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (cycleKeyBinding.wasPressed()) {
-                if (client.player != null && !CONFIG.getHoldAndScroll()) {
-                    shiftRows(client, Direction.DOWN);
-                }
-            }
-        });
-
+                "key.hotbarcycle.cycle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_H, HOTBARCYCLE_CATEGORY));
         singleCycleKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.hotbarcycle.single_cycle",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_J,
-                "category.hotbarcycle.keybinds"
-        ));
+                "key.hotbarcycle.single_cycle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_J, HOTBARCYCLE_CATEGORY));
+    }
+
+    private void registerTickHandler() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (singleCycleKeyBinding.wasPressed()) {
-                if (client.player != null && client.player.getInventory() != null && !CONFIG.getHoldAndScroll()) {
-                    shiftSingle(client, client.player.getInventory().selectedSlot, Direction.DOWN);
-                }
-            }
+            if (client.player == null || CONFIG.getHoldAndScroll()) return;
+            while (cycleKeyBinding.wasPressed()) shiftRows(client, Direction.DOWN);
+            while (singleCycleKeyBinding.wasPressed()) shiftSingle(client, client.player.getInventory().getSelectedSlot(), Direction.DOWN);
         });
     }
 
     public enum Direction {
-        UP,
-        DOWN;
-
-        public Direction reverse(final boolean reversed) {
-            return switch (this) {
-                case UP -> !reversed ? UP : DOWN;
-                case DOWN -> !reversed ? DOWN : UP;
-            };
-        }
+        UP, DOWN;
+        public Direction reverse(boolean reversed) { return reversed ? (this == UP ? DOWN : UP) : this; }
     }
 
-    public static void shiftRows(MinecraftClient client, final Direction requestedDirection) {
-        // invert direction if reverse cycle is enabled
-        final Direction direction = requestedDirection.reverse(CONFIG.getReverseCycleDirection());
+    public static void shiftRows(MinecraftClient client, Direction requestedDirection) {
+        if (client.player == null) return;
+        List<Integer> rowsToCycle = getRowsInCycleOrder(requestedDirection.reverse(CONFIG.getReverseCycleDirection()));
+        if (rowsToCycle.isEmpty()) return;
 
-        @SuppressWarnings("resource")
-        ClientPlayerInteractionManager interactionManager = client.interactionManager;
-        if (interactionManager == null || client.player == null) {
-            return;
-        }
-
-        int i;
-        if (direction != Direction.DOWN ? CONFIG.getEnableRow1() : CONFIG.getEnableRow3()) {
-            for (i = 0; i < 9; i++) {
+        for (int rowStartSlot : rowsToCycle) {
+            for (int i = 0; i < 9; i++) {
                 if (isColumnEnabled(i)) {
-                    clicker.swap(client, (direction == Direction.DOWN ? 9 : 27) + i, i);
+                    clicker.swap(client, rowStartSlot + i, i);
                 }
             }
         }
-
-        if (CONFIG.getEnableRow2()) {
-            for (i = 0; i < 9; i++) {
-                if (isColumnEnabled(i)) {
-                    clicker.swap(client, 18 + i, i);
-                }
-            }
-        }
-
-        if (direction != Direction.DOWN ? CONFIG.getEnableRow3() : CONFIG.getEnableRow1()) {
-            for (i = 0; i < 9; i++) {
-                if (isColumnEnabled(i)) {
-                    clicker.swap(client, (direction == Direction.DOWN ? 27 : 9) + i, i);
-                }
-            }
-        }
-
-        if (CONFIG.getPlaySound()) {
-            client.player.playSoundToPlayer(SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.MASTER, 0.5f, 1.5f);
-        }
+        playCycleSound(client, 1.5f);
     }
 
-    public static void shiftSingle(MinecraftClient client, int hotbarSlot, final Direction requestedDirection) {
-        // invert direction if reverse cycle is enabled
-        final Direction direction = requestedDirection.reverse(CONFIG.getReverseCycleDirection());
+    public static void shiftSingle(MinecraftClient client, int hotbarSlot, Direction requestedDirection) {
+        if (client.player == null) return;
+        List<Integer> rowsToCycle = getRowsInCycleOrder(requestedDirection.reverse(CONFIG.getReverseCycleDirection()));
+        if (rowsToCycle.isEmpty()) return;
 
-        @SuppressWarnings("resource")
-        ClientPlayerInteractionManager interactionManager = client.interactionManager;
-        if (interactionManager == null || client.player == null) {
-            return;
+        rowsToCycle.forEach(rowStartSlot -> clicker.swap(client, rowStartSlot + hotbarSlot, hotbarSlot));
+        playCycleSound(client, 1.8f);
+    }
+    
+    private static List<Integer> getRowsInCycleOrder(Direction direction) {
+        List<Integer> rows = new ArrayList<>(3);
+        if (direction == Direction.DOWN) {
+            if (CONFIG.getEnableRow1()) rows.add(9);
+            if (CONFIG.getEnableRow2()) rows.add(18);
+            if (CONFIG.getEnableRow3()) rows.add(27);
+        } else { // UP
+            if (CONFIG.getEnableRow3()) rows.add(27);
+            if (CONFIG.getEnableRow2()) rows.add(18);
+            if (CONFIG.getEnableRow1()) rows.add(9);
         }
+        return rows;
+    }
 
-        if (direction == Direction.DOWN ? CONFIG.getEnableRow1() : CONFIG.getEnableRow3()) {
-            clicker.swap(client, (direction != Direction.DOWN ? 9 : 27) + hotbarSlot, hotbarSlot);
-        }
-
-        if (CONFIG.getEnableRow2()) {
-            clicker.swap(client, 18 + hotbarSlot, hotbarSlot);
-        }
-
-        if (direction == Direction.DOWN ? CONFIG.getEnableRow3() : CONFIG.getEnableRow1()) {
-            clicker.swap(client, (direction != Direction.DOWN ? 27 : 9) + hotbarSlot, hotbarSlot);
-        }
-
-        if (CONFIG.getPlaySound()) {
-            client.player.playSoundToPlayer(SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.MASTER, 0.5f, 1.8f);
+    private static void playCycleSound(MinecraftClient client, float pitch) {
+        if (CONFIG.getPlaySound() && client.world != null && client.player != null) {
+            client.world.playSound(client.player, client.player.getBlockPos(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.MASTER, 0.5f, pitch);
         }
     }
 
     private static Clicker getClicker() {
-        if (FabricLoader.getInstance().isModLoaded("inventoryprofilesnext")) {
-            LOGGER.info("Inventory Profiles Next was found, switching to compatible clicker!");
-            return new IPNClicker();
-        }
-
-        return new VanillaClicker();
+        return FabricLoader.getInstance().isModLoaded("inventoryprofilesnext") ? new IPNClicker() : new VanillaClicker();
     }
 
-    private static boolean isColumnEnabled(int columnIndex) {
-        return switch (columnIndex) {
-            case 0 -> CONFIG.getEnableColumn0();
-            case 1 -> CONFIG.getEnableColumn1();
-            case 2 -> CONFIG.getEnableColumn2();
-            case 3 -> CONFIG.getEnableColumn3();
-            case 4 -> CONFIG.getEnableColumn4();
-            case 5 -> CONFIG.getEnableColumn5();
-            case 6 -> CONFIG.getEnableColumn6();
-            case 7 -> CONFIG.getEnableColumn7();
-            case 8 -> CONFIG.getEnableColumn8();
-            default -> false;
-        };
-    }
-
-    static {
-        if (FabricLoader.getInstance().isModLoaded("cloth-config")) {
-            CONFIG = AutoConfig.register(ClothConfigHotbarCycleConfig.class, GsonConfigSerializer::new).getConfig();
-        } else {
-            CONFIG = new DefaultHotbarCycleConfig();
-        }
-
+    private static boolean isColumnEnabled(int i) {
+        return i >= 0 && i < 9 && COLUMN_CHECKS[i].getAsBoolean();
     }
 }

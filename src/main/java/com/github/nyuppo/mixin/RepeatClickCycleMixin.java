@@ -26,8 +26,18 @@ public class RepeatClickCycleMixin {
 
     @Inject(method = "handleInputEvents", at = @At("HEAD"))
     private void repeatClickCycleMixin(CallbackInfo ci) {
-        if (HotbarCycleClient.getConfig().getRepeatSlotToCycle() && this.options.hotbarKeys[this.player.getInventory().selectedSlot].wasPressed()) {
-            HotbarCycleClient.shiftSingle(((MinecraftClient)(Object)this), this.player.getInventory().selectedSlot, HotbarCycleClient.Direction.DOWN);
+        if (player == null || player.getInventory() == null) return;
+
+        int selectedSlot = player.getInventory().getSelectedSlot(); // ✅ nuevo método público
+
+        if (HotbarCycleClient.getConfig().getRepeatSlotToCycle() &&
+            this.options.hotbarKeys[selectedSlot].wasPressed()) {
+
+            HotbarCycleClient.shiftSingle(
+                (MinecraftClient)(Object)this,
+                selectedSlot,
+                HotbarCycleClient.Direction.DOWN
+            );
         }
     }
 }
