@@ -1,6 +1,6 @@
 # 🌾 HotbarCycle (Optimized & Ported for 1.21.9)
 
-**Note:** This is *not* the original version of the mod.  
+**Note:** This is *not* the original version of the mod.
 It has been **optimized and updated** to work with **Minecraft Fabric 1.21.9**, maintaining all original features while improving performance and compatibility.
 
 ---
@@ -17,31 +17,36 @@ Originally developed for **Minecraft 1.19**, this updated port keeps the same co
 
 This mod adds **two customizable keybinds**:
 
-- 🔁 **Cycle Hotbar (Default: H)**  
+* 🔁 **Cycle Hotbar (Default: H)**
   Shifts all rows of your inventory downward, giving you quick access to every item slot without ever opening your inventory.
 
-- 🔄 **Cycle Slot (Default: J)**  
+* 🔄 **Cycle Slot (Default: J)**
   Shifts only the selected hotbar column downward, based on whichever slot is currently active.
 
 ### 🖱️ Hold-and-Scroll Mode
+
 Instead of repeatedly pressing a key, simply **hold the key** and **use your mouse wheel** to scroll through your hotbar or inventory rows!
 
 ---
 
-## ⚙️ Configuration Options (Dosen't Work)
+## ⚙️ Configuration Options
 
-Accessible through *Mod Menu*:
+**Cloth Config API** and **Mod Menu** are required to access the configuration screen.
+If these are not installed, the mod will still work with default settings.
 
-- Reverse cycle direction  
-- Enable/disable sound effects  
-- Toggle which rows or columns are affected by cycling  
+* Reverse cycle direction
+* Enable/disable sound effects
+* Toggle which rows or columns are affected by cycling
+
+**Cloth Config API:** [https://modrinth.com/mod/cloth-config](https://modrinth.com/mod/cloth-config#)
 
 ---
 
 ## 📦 Downloads
-- **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases)
-- **CurseForge:** [https://www.curseforge.com/minecraft/mc-mods/hotbarcycle](https://www.curseforge.com/minecraft/mc-mods/hotbarcycle)  
-- **Modrinth:** [https://modrinth.com/mod/hotbarcycle](https://modrinth.com/mod/hotbarcycle)
+
+* **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases)
+* **CurseForge:** [https://www.curseforge.com/minecraft/mc-mods/hotbarcycle](https://www.curseforge.com/minecraft/mc-mods/hotbarcycle)
+* **Modrinth:** [https://modrinth.com/mod/hotbarcycle](https://modrinth.com/mod/hotbarcycle)
 
 *(These links point to the original mod pages.)*
 
@@ -55,12 +60,12 @@ Accessible through *Mod Menu*:
 
 ## 🧩 Credits
 
-- Original mod by **nyuppo**  
-- Optimized & ported to **Fabric 1.21.9** by **ElCorchetes**
+* Original mod by **nyuppo**
+* Optimized & ported to **Fabric 1.21.9** by **ElCorchetes**
 
 ---
 
 ## ⚖️ License
 
-All original code and assets belong to their respective creators.  
+All original code and assets belong to their respective creators.
 This modified version is distributed solely for compatibility and performance improvements on newer Minecraft versions.
