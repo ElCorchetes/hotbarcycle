@@ -1,7 +1,7 @@
-# 🌾 HotbarCycle (Optimized & Ported for 1.26.1.2)
+# 🌾 HotbarCycle (Optimized & Ported for 26.1.2)
 
 **Note:** This is *not* the original version of the mod.
-It has been **optimized and updated** to work with **Minecraft Fabric 1.26.2**, maintaining all original features while improving performance and compatibility.
+It has been **optimized and updated** to work with **Minecraft Fabric 26.1.2**, maintaining all original features while improving performance and compatibility.
 
 ---
 
@@ -44,8 +44,8 @@ If these are not installed, the mod will still work with default settings.
 
 ## 📦 Downloads
 
-* **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases/tag/26.1)
-* **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases)
+* **Optimized Port (26.1.2):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases/tag/26.1)
+* **Optimized Port (1.21.9):** [Download Mod on GitHub Releases](https://github.com/ElCorchetes/hotbarcycle/releases/tag/1.21)
 * **CurseForge:** [https://www.curseforge.com/minecraft/mc-mods/hotbarcycle](https://www.curseforge.com/minecraft/mc-mods/hotbarcycle)
 * **Modrinth:** [https://modrinth.com/mod/hotbarcycle](https://modrinth.com/mod/hotbarcycle)
 
